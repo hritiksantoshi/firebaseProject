@@ -11,6 +11,14 @@ const createUser = Joi.object({
     })
         return createUser.validate(user);
   }
+function signinUser(user){
+  const signin = Joi.object({
+      email: Joi.string().required(),
+      password: Joi.string().required()
+  })
+  return signin.validate(user);
+}
   module.exports = {
-      validateUser
+      validateUser,
+      signinUser
   }

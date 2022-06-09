@@ -1,9 +1,11 @@
 const admin = require("../connection/admin");
 const app = require("../connection/user");
 const {
-  getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword} = require("firebase/auth");
+  getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged } = require("firebase/auth");
 const auth = getAuth(app);
-const {validateUser }= require('../validations/user.validation');
+const {validateUser,signinUser}= require('../validations/user.validation');
+const accesstoKen = require("../middleware/token");
+const { async } = require("@firebase/util");
 const createUser = async (userBody) => {
   try {
   let password = "user@123";
@@ -32,12 +34,16 @@ catch (error) {
 
 const signIn = async (userData) => {
   try{
+       let user = signinUser(userData);
+       if(user.error){
+         return user.error.details;
+       }
+
   let userCredential = await signInWithEmailAndPassword(
     auth,
     userData.email,
     userData.password
   );
-   console.log(userCredential);
   if (userCredential.user.emailVerified == true) {
     let idtoken = await userCredential.user.getIdToken(true);
     return {msg:"SIGNEDUP_SUCCESSFULLY",accesstoKen:idtoken};
@@ -51,10 +57,33 @@ catch (error) {
 }
 }
 
+const getIdToken = async(user) =>{
+  console.log(user);
+}
 
+
+
+// const newtoken = async() =>{
+//   try{
+//        onAuthStateChanged(auth,(user)=>{
+  
+//   if(user){
+//      const token = await user.getIdToken(true);
+//      console.log(token);
+//      return token;
+//   }
+//   next();
+ 
+// })
+//   }
+//   catch (error) {
+//     return error.message;
+//   }
+// }
 
 module.exports = {
   createUser: createUser,
   signIn:signIn,
+  getIdToken:getIdToken
 
-};
+}

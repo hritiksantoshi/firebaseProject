@@ -1,6 +1,7 @@
 const admin = require("../../connection/admin");
 const app = require("../../connection/user");
 const userHandler = require("../../handler/UserHandler");
+const { get } = require("../route");
 
 
 const createUser = async (req, res) => {
@@ -17,9 +18,16 @@ const signIn = async (req,res) => {
        res.status(201).send(user);
 }
 
+const getIdToken = async(req,res) =>{
+      const token = await userHandler.getIdToken(req.activeuser);
+      res.send(token);
+
+}
+
 
 
 module.exports = {
   createUser: createUser,
-  signIn: signIn
+  signIn: signIn,
+  getIdToken:getIdToken
 };

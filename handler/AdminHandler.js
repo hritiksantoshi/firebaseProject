@@ -1,7 +1,6 @@
 const admin = require("../connection/admin");
 const { getAuth } = require("firebase-admin/auth");
 const emailService = require("../services/emailService");
-
 const getUsers = async (uid, userData) => {
     try{
   const user = await admin.User.doc(uid).get(); 
